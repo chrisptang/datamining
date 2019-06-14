@@ -7,13 +7,12 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
 
-import java.io.File;
 import java.io.IOException;
 
 public class LogicalRegressionPoorPerformance {
 
     public static void main(String[] args) throws Exception {
-        Instances trainingDataSet = getDataSet("/Users/tangpeng/Documents/codes/training_set.arff");
+        Instances trainingDataSet = getDataSet("training_set.arff");
         /** Classifier here is Linear Regression */
 
         Classifier classifier = new RegressionByDiscretization();
@@ -24,7 +23,7 @@ public class LogicalRegressionPoorPerformance {
          * algorithm with testing data
          */
         Evaluation eval = new Evaluation(trainingDataSet);
-        Instances testingDataSet = getDataSet("/Users/tangpeng/Documents/codes/testing_set.arff");
+        Instances testingDataSet = getDataSet("testing_set.arff");
         eval.evaluateModel(classifier, testingDataSet);
         /** Print the algorithm summary */
         System.out.println("** Linear Regression Evaluation with Datasets **");
@@ -33,7 +32,7 @@ public class LogicalRegressionPoorPerformance {
         System.out.print(" the expression for the input data as per alogorithm is ");
         System.out.println(classifier);
 
-        Instance predicationDataSet = getDataSet("/Users/tangpeng/Documents/codes/prediction_set.arff").lastInstance();
+        Instance predicationDataSet = getDataSet("prediction_set.arff").lastInstance();
         double value = classifier.classifyInstance(predicationDataSet);
         System.out.println("=======================Prediction Output===============================");
         /** Prediction Output */
@@ -49,7 +48,7 @@ public class LogicalRegressionPoorPerformance {
         ArffLoader loader = new ArffLoader();
         //loader.setFile(new File(fileName));
         /** load the traing data */
-        loader.setFile(new File(fileName));
+        loader.setSource(LogicalRegressionPoorPerformance.class.getResourceAsStream("/" + fileName));
         /**
          * we can also set the file like loader3.setFile(new
          * File("test-confused.arff"));
