@@ -25,15 +25,30 @@ public class PoorPerformance {
 
 //        Instances testingDataSet = getDataSet("weather.arff");
         Instances testingDataSet = getDataSet("poor_perf_set.arff");
-        kMeans.setPreserveInstancesOrder(true);
-        kMeans.buildClusterer(testingDataSet);
-        int[] assignments = kMeans.getAssignments();
-        int i = 0;
-        for (int clusterNum : assignments) {
-            System.out.printf("Instance %d -> Cluster %d;\n", i, clusterNum);
-            i++;
+        int initialK = 3, k = initialK, size = 20;
+        double[] squaredErrors = new double[size - k + 1];
+        for (; k <= size; k++) {
+            kMeans = new weka.clusterers.SimpleKMeans();
+            kMeans.setNumClusters(k);
+            kMeans.setPreserveInstancesOrder(true);
+            kMeans.setDisplayStdDevs(true);
+            kMeans.setSeed(2 * k);
+            kMeans.buildClusterer(testingDataSet);
+            PrintUtil.print(String.format("======================= K = %s ===============================", k));
+            PrintUtil.print(String.format("K=%s, SquaredError:%s", k, kMeans.getSquaredError()));
+            squaredErrors[k - initialK] = kMeans.getSquaredError();
+            PrintUtil.print(kMeans.toString());
+            PrintUtil.print(String.format("======================= End of K = %s ===============================", k));
+
+//            int[] assignments = kMeans.getAssignments();
+//            int i = 0;
+//            for (int clusterNum : assignments) {
+//                System.out.printf("Instance %d -> Cluster %d;\n", i, clusterNum);
+//                i++;
+//            }
         }
-        System.out.println(kMeans.toString());
+
+        PrintUtil.print(squaredErrors);
     }
 
     private static void logicalRegression() throws Exception {
@@ -46,17 +61,17 @@ public class PoorPerformance {
         Classifier classifier = new LinearRegression();
         eval.evaluateModel(classifier, testingDataSet);
         /** Print the algorithm summary */
-        System.out.println("** Linear Regression Evaluation with Datasets **");
-        System.out.println(eval.toSummaryString(true));
-        System.out.println("=====================================================================");
+        PrintUtil.print("** Linear Regression Evaluation with Datasets **");
+        PrintUtil.print(eval.toSummaryString(true));
+        PrintUtil.print("=====================================================================");
         System.out.print(" the expression for the input data as per alogorithm is ");
-        System.out.println(classifier);
+        PrintUtil.print(classifier);
 
         Instance predicationDataSet = getDataSet("prediction_set.arff").firstInstance();
         double value = classifier.classifyInstance(predicationDataSet);
-        System.out.println("=======================Prediction Output===============================");
+        PrintUtil.print("=======================Prediction Output===============================");
         /** Prediction Output */
-        System.out.println(value);
+        PrintUtil.print(value);
     }
 
     public static Instances getDataSet(String fileName) throws IOException {
